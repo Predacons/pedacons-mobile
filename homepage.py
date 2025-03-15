@@ -5,6 +5,7 @@ import datetime
 from database import Database
 from domain_model.chat import Chat
 from domain_model.user import User
+from chatpage import ChatPage
 
 ENABLE_ADS = True
 
@@ -13,8 +14,13 @@ class MainApp(Control):
         super().__init__()
         self.page = page
         self.page.theme.use_material3 = True
+        self.game_list = ListView(expand=1, spacing=10, padding=20, auto_scroll=False)  # Initialize game_list as a scrollable Column
         # self.user_id_field = TextField(label="User ID")
-        
+        self.page.floating_action_button = FloatingActionButton(
+                icon=Icons.ADD,
+                data=0,
+                on_click=self.open_new_page,
+            )
         self.setup_ui()
         # Load games when the app starts
         self.load_games(None)

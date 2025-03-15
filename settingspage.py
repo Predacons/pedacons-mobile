@@ -10,7 +10,6 @@ class SettingsPage(Control):
     def __init__(self, page: Page):
         super().__init__(self)
         self.page = page
-        self.steam = steam
         self.db = Database()
         self.user = None
         self.page.theme.use_material3 = True

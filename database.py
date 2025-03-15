@@ -38,6 +38,9 @@ class Database:
                                   type VARCHAR(255),
                                   createddate DATETIME NOT NULL,
                                   lastupdated DATETIME NOT NULL, 
+                                  vectordb VARCHAR(255),
+                                  websearch BOOLEAN,
+                                  sytemprompt TEXT,
                                   chat TEXT,
                                   metadata TEXT)""")
             
@@ -145,6 +148,9 @@ class Database:
                 type=row[2],
                 createddate=row[3],
                 lastupdated=row[4],
+                vectordb=row[5],
+                websearch=row[6],
+                sytemprompt=row[7],
                 chat=row[5],
                 metadata=row[6]
             )
@@ -164,6 +170,9 @@ class Database:
                 type=row[2],
                 createddate=row[3],
                 lastupdated=row[4],
+                vectordb=row[5],
+                websearch=row[6],
+                sytemprompt=row[7],
                 chat=row[5],
                 metadata=row[6]
             )
@@ -180,13 +189,13 @@ class Database:
             c = self.db.cursor()
             chat_tuples = [
                 (
-                    chat.title, chat.type, chat.createddate, chat.lastupdated, chat.chat, chat.metadata
+                    chat.title, chat.type, chat.createddate, chat.lastupdated, chat.vectordb, chat.websearch, chat.sytemprompt, chat.chat, chat.metadata
                 )
                 for chat in chats
             ]
             c.executemany(
-                """INSERT INTO chats (title, type, createddate, lastupdated, chat, metadata) 
-                VALUES (?, ?, ?, ?, ?, ?)""", 
+                """INSERT INTO chats (title, type, createddate, lastupdated, vectordb, websearch, sytemprompt, chat, metadata) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
                 chat_tuples
             )
             self.db.commit()
@@ -194,14 +203,14 @@ class Database:
         except sqlite.DatabaseError as e:
             print("Error: Failed to insert multiple chats")
             print(e)
-
+        
     def update_chat(self, chat: Chat):
         """ Update an existing chat """
         c = self.db.cursor()
         c.execute(
-            """UPDATE chats SET title = ?, type = ?, createddate = ?, lastupdated = ?, chat = ?, metadata = ? WHERE id = ?""",
+            """UPDATE chats SET title = ?, type = ?, createddate = ?, lastupdated = ?, vectordb = ?, websearch = ?, sytemprompt = ?, chat = ?, metadata = ? WHERE id = ?""",
             (
-                chat.title, chat.type, chat.createddate, chat.lastupdated, chat.chat, chat.metadata, chat.id
+                chat.title, chat.type, chat.createddate, chat.lastupdated, chat.vectordb, chat.websearch, chat.sytemprompt, chat.chat, chat.metadata, chat.id
             )
         )
         self.db.commit()

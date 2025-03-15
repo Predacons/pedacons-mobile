@@ -1,11 +1,11 @@
 from flet import *
 import flet.ads as ads
 import json
-from steam_web_api import Steam
 import datetime
 from homepage import MainApp
 from settingspage import SettingsPage  # Import SettingsPage
 from database import Database
+from chatpage import ChatPage
 
 def main(page: Page):
     def Dialog(title,content,lista):
@@ -47,23 +47,22 @@ def main(page: Page):
     def route_change(route):
         page.clean()
         KEY = ""
-        steam = Steam(KEY)
         if page.route == '/':
-            page.add(MainApp(page, steam))
+            page.add(MainApp(page))
         elif page.route == '/add':
-            page.add(AddPage(page, steam))
-        elif page.route.startswith('/game/'):
-            game_id = int(page.route.split('/')[-1])
-            game = get_game_by_id(game_id)
-            page.add(GamePage(page, steam, game))
+            page.add(AddPage(page))
+        elif page.route.startswith('/chat/'):
+            chat_id = int(page.route.split('/')[-1])
+            chat = get_chat_by_id(chat_id)
+            page.add(ChatPage(page, chat))
         elif page.route == '/settings':  # Add route for settings
-            page.add(SettingsPage(page, steam))
-    def get_game_by_id(game_id):
+            page.add(SettingsPage(page))
+    def get_chat_by_id(chat_id):
         db = Database()
         db.connect_to_db()
-        game = db.get_game_by_id(game_id)
+        chat = db.get_chat_by_id(chat_id)
         db.close_db()
-        return game
+        return chat
     if page.theme is None:
         page.theme = Theme()
     page.theme.use_material3 = True
