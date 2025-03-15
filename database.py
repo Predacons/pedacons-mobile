@@ -178,7 +178,18 @@ class Database:
             )
             return chat
         return None
-
+    def insert_chat(self, chat: Chat):
+        """ Insert a new chat into the chats table """
+        c = self.db.cursor()
+        c.execute(
+            """INSERT INTO chats (title, type, createddate, lastupdated, vectordb, websearch, sytemprompt, chat, metadata) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                chat.title, chat.type, datetime.now(), datetime.now(), chat.vectordb, chat.websearch, chat.sytemprompt, chat.chat, chat.metadata
+            )
+        )
+        self.db.commit()
+        return c.lastrowid
     def insert_multiple_chats(self, chats: List[Chat]):
         """
         Insert multiple chats into the chats table.
@@ -189,7 +200,7 @@ class Database:
             c = self.db.cursor()
             chat_tuples = [
                 (
-                    chat.title, chat.type, chat.createddate, chat.lastupdated, chat.vectordb, chat.websearch, chat.sytemprompt, chat.chat, chat.metadata
+                    chat.title, chat.type, datetime.now, datetime.now, chat.vectordb, chat.websearch, chat.sytemprompt, chat.chat, chat.metadata
                 )
                 for chat in chats
             ]

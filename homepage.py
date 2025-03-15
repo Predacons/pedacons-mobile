@@ -6,6 +6,7 @@ from database import Database
 from domain_model.chat import Chat
 from domain_model.user import User
 from chatpage import ChatPage
+from typing import List
 
 ENABLE_ADS = True
 
@@ -46,7 +47,12 @@ class MainApp(Control):
         
     
     def open_new_page(self, e):
-        self.page.go('/add')
+        db = Database()
+        db.connect_to_db()
+        chat = Chat()
+        chat_id = db.insert_chat(chat)
+        db.close_db()
+        self.open_chat_page(chat_id)
     
     def open_chat_page(self,chat_id):
         self.page.go('/chat/'+str(chat_id))
@@ -57,7 +63,7 @@ class MainApp(Control):
         db.connect_to_db()
         db_path = db.return_db_path()
         self.page.add(Text(db_path, color="red"))
-        chats_data = db.read_chat_db()
+        chats_data = db.read_chat_db(sort_by="lastupdated DESC")
         db.close_db()
         self.chat_list.controls.clear()
         add_item = ListTile(
@@ -65,13 +71,19 @@ class MainApp(Control):
             title=Text("Add new chat"),
             on_click=self.open_new_page
         )
+        self.chat_list.controls.append(add_item)
         for chat in chats_data:
-            name = chat.name
+            title = chat.title
             vector_db = chat.vectordb
             web_search = chat.websearch
+            last_updated = chat.lastupdated
+            created_date = chat.createddate
+            print(last_updated)
+            formatted_last_updated = datetime.datetime.strptime(last_updated.split('.')[0], "%Y-%m-%d %H:%M:%S").strftime("%d %b %Y, %I:%M %p")
+            formatted_created_date = datetime.datetime.strptime(created_date.split('.')[0], "%Y-%m-%d %H:%M:%S").strftime("%d %b %Y, %I:%M %p")
             list_item = ListTile(
-                title=Text(name),
-                subtitle=Text(f"vector db: {vector_db if vector_db else 'No'} minutes \nCompleted: {'Yes' if web_search else 'No'} "),
+                title=Text(title),
+                subtitle=Text(f"vector db: {vector_db if vector_db else 'No'} \nweb search: {'Yes' if web_search else 'No'} \nlast updated: {formatted_last_updated} \ncreated date: {formatted_created_date}"),
                 on_click=lambda _, chat_id=chat.id: self.open_chat_page(chat_id)
             )
             self.chat_list.controls.append(list_item)

@@ -1,11 +1,12 @@
 from datetime import datetime
+import random
 
 class Chat:
-    def __init__(self, id: int, title: str, createddate: datetime, lastupdated: datetime, 
+    def __init__(self, id: int = None, title: str = 'New Chat', createddate: datetime = None, lastupdated: datetime =None, 
                  type: str = None, chat: str = None, metadata: str = None, 
                  vectordb: str = None, websearch: bool = False, sytemprompt: str = None):
         self.id = id
-        self.title = title
+        self.title = title + str(random.randint(1, 1000))
         self.type = type
         self.createddate = createddate
         self.lastupdated = lastupdated

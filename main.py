@@ -49,8 +49,6 @@ def main(page: Page):
         KEY = ""
         if page.route == '/':
             page.add(MainApp(page))
-        elif page.route == '/add':
-            page.add(AddPage(page))
         elif page.route.startswith('/chat/'):
             chat_id = int(page.route.split('/')[-1])
             chat = get_chat_by_id(chat_id)
