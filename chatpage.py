@@ -3,6 +3,8 @@ import flet.ads as ads
 import json
 import datetime
 from domain_model.chat import Chat
+from google import genai
+from google.genai import types
 
 
 class ChatPage(Control):
@@ -10,6 +12,8 @@ class ChatPage(Control):
         super().__init__(self)
         self.page = page
         self.chat = chat
+        self.genai_client = genai.Client(api_key="")
+        self.model_id = "gemini-2.0-flash" 
         self.page.theme.use_material3 = True
         self.page.floating_action_button = FloatingActionButton(
                 icon=Icons.EDIT,
@@ -85,9 +89,50 @@ class ChatPage(Control):
             self.input_field.value = ""
             self.page.update()
             self.get_genai_response(user_message)
+    
+    def add_message_to_chat(self, message):
+        message_container = Container(
+            content=Row([
+                Text(message),
+                IconButton(
+                    icon=Icons.COPY,
+                    on_click=lambda e: self.copy_to_clipboard(message)
+                )
+            ])
+        )
+        self.chat_list.controls.append(message_container)
+        self.page.update()
+    
+    def copy_to_clipboard(self, message):
+        self.page.clipboard.set_text(message)
+        self.page.snack_bar = SnackBar(Text("Copied to clipboard"))
+        self.page.snack_bar.open = True
+        self.page.update()
 
+    def display_plain_result(self,response):
+        output=''
+        for part in response.candidates[0].content.parts:
+            if part.text is not None:
+                output = output + part.text  # Print text as plain text
+            if part.executable_code is not None:
+                output = output + part.executable_code.code # Print code as plain text
+            if part.code_execution_result is not None:
+                output = output + part.code_execution_result.output # Print output as plain text
+            if part.inline_data is not None:
+                output = output + part.inline_data.data
+        return output
     def get_genai_response(self, user_message):
-        response = self.genai_client.generate(user_message)
-        self.chat_list.controls.append(Text(f"Bot: {response}"))
+        response = self.genai_client.models.generate_content(
+            model=self.model_id,
+            contents=user_message,
+            config = types.GenerateContentConfig(
+                tools=[types.Tool(
+                    code_execution=types.ToolCodeExecution
+                    )],
+                system_instruction="you arw a good person"
+                )
+            )
+        output = self.display_plain_result(response)
+        self.chat_list.controls.append(Text(f"Bot: {output}"))
         self.page.update()
 
