@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class User:
-    def __init__(self, id: int, name: str, createddate: datetime, lastupdated: datetime, 
+    def __init__(self, id: int=None, name: str=None, createddate: datetime=None, lastupdated: datetime=None, 
                  vertexapikey: str = None, openaiapikey: str = None, azureendpoint: str = None, 
                  azureapikey: str = None, azureapiversion: str = None, azuredeploymentname: str = None, 
                  maxhistory: int = None, metadata: str = None):

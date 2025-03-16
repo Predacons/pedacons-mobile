@@ -49,40 +49,40 @@ class SettingsPage(Control):
             self.is_new_user = False
             self.user = users[0]  # Assuming single user for simplicity
             self.name_field = TextField(label="Name", value=self.user.name)
-            self.steamid_field = TextField(label="Steam ID", value=self.user.steamid)
-            self.googleid_field = TextField(label="Google ID", value=self.user.googleid)
-            self.epicid_field = TextField(label="Epic ID", value=self.user.epicid)
-            self.gogid_field = TextField(label="GOG ID", value=self.user.gogid)
-            self.psid_field = TextField(label="PS ID", value=self.user.psid)
-            self.xboxid_field = TextField(label="Xbox ID", value=self.user.xboxid)
-            self.nintendoid_field = TextField(label="Nintendo ID", value=self.user.nintendoid)
+            self.vertexapikey_field = TextField(label="Vertex Api Key", value=self.user.vertexapikey)
+            self.openaiapikey_field = TextField(label="Openai Api Key", value=self.user.openaiapikey)
+            self.azureendpoint_field = TextField(label="Azure Endpoint", value=self.user.azureendpoint)
+            self.azureapikey_field = TextField(label="Azure Api Key", value=self.user.azureapikey)
+            self.azureapiversion_field = TextField(label="Azure Api Version", value=self.user.azureapiversion)
+            self.azuredeploymentname_field = TextField(label="Azure Deployment Name", value=self.user.azuredeploymentname)
+            self.maxhistory_field = TextField(label="Maximum History", value=self.user.maxhistory)
             self.metadata_field = TextField(label="Metadata", value=self.user.metadata)
         else:
             self.is_new_user = True
             self.user = User()  # Create a new user instance
             self.name_field = TextField(label="Name")
-            self.steamid_field = TextField(label="Steam ID")
-            self.googleid_field = TextField(label="Google ID")
-            self.epicid_field = TextField(label="Epic ID")
-            self.gogid_field = TextField(label="GOG ID")
-            self.psid_field = TextField(label="PS ID")
-            self.xboxid_field = TextField(label="Xbox ID")
-            self.nintendoid_field = TextField(label="Nintendo ID")
+            self.vertexapikey_field = TextField(label="Vertex Api Key")
+            self.openaiapikey_field = TextField(label="Openai Api Key")
+            self.azureendpoint_field = TextField(label="Azure Endpoint")
+            self.azureapikey_field = TextField(label="Azure Api Key")
+            self.azureapiversion_field = TextField(label="Azure Api Version")
+            self.azuredeploymentname_field = TextField(label="Azure Deployment Name")
+            self.maxhistory_field = TextField(label="Maximum History")
             self.metadata_field = TextField(label="Metadata")
         
         self.page.add(
             SafeArea(
-                content=Column([
-                    self.name_field,
-                    self.steamid_field,
-                    self.googleid_field,
-                    self.epicid_field,
-                    self.gogid_field,
-                    self.psid_field,
-                    self.xboxid_field,
-                    self.nintendoid_field,
-                    self.metadata_field
-                ])
+            content=Column([
+                self.name_field,
+                self.vertexapikey_field,
+                self.openaiapikey_field,
+                self.azureendpoint_field,
+                self.azureapikey_field,
+                self.azureapiversion_field,
+                self.azuredeploymentname_field,
+                self.maxhistory_field,
+                self.metadata_field
+            ])
             )
         )
         self.page.update()  # Ensure the page is updated after adding components
@@ -90,13 +90,13 @@ class SettingsPage(Control):
     def save_user_data(self, e):
         if self.user:
             self.user.name = self.name_field.value
-            self.user.steamid = self.steamid_field.value
-            self.user.googleid = self.googleid_field.value
-            self.user.epicid = self.epicid_field.value
-            self.user.gogid = self.gogid_field.value
-            self.user.psid = self.psid_field.value
-            self.user.xboxid = self.xboxid_field.value
-            self.user.nintendoid = self.nintendoid_field.value
+            self.user.vertexapikey = self.vertexapikey_field.value
+            self.user.openaiapikey = self.openaiapikey_field.value
+            self.user.azureendpoint = self.azureendpoint_field.value
+            self.user.azureapikey = self.azureapikey_field.value
+            self.user.azureapiversion = self.azureapiversion_field.value
+            self.user.azuredeploymentname = self.azuredeploymentname_field.value
+            self.user.maxhistory = self.maxhistory_field.value
             self.user.metadata = self.metadata_field.value
             self.db.connect_to_db()
             if self.is_new_user:

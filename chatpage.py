@@ -24,7 +24,7 @@ class ChatPage(Control):
     
     def app_bar(self):
         view = AppBar(
-            title=Text(self.chat.name),
+            title=Text(self.chat.title),
             leading=IconButton(
                 icon=Icons.ARROW_BACK_SHARP,
                 on_click=self.go_home
@@ -42,48 +42,52 @@ class ChatPage(Control):
         self.page.add(self.app_bar())
         
         # Create a container for the image
-        image_container = Container(
-            content=Image(src=self.chat.header_image, fit="cover"),
-            padding=0,
-            width="100%"
-        )
+        # image_container = Container(
+        #     content=Image(src=self.chat.header_image, fit="cover"),
+        #     padding=0,
+        #     width="100%"
+        # )
         if isinstance(self.chat.metadata, str):
             self.chat.metadata = json.loads(self.chat.metadata)
         # Create a container for the chat details
         details_container = Container(
             content=Column([
-                Text(self.chat.name, style="headline4"),
-                Text(self.chat.short_description, style="body1"),
-                Text(f"Playtime: {self.chat.playtime_forever}", style="body2"),
-                Text(f"Last Played: {self.chat.rtime_last_played}", style="body2"),
-                Text(f"Completed: {self.chat.completed}", style="body2"),
-                Text(f"Completed Date: {self.chat.completed_date}", style="body2"),
-                Text(f"Rating: {self.chat.rating}", style="body2"),
-                Text(f"Link: {self.chat.link}", style="body2"),
-                Text(f"Link2: {self.chat.link2}", style="body2"),
-                Text(f"Hide: {self.chat.hide}", style="body2"),
-                Text(f"Created Date: {self.chat.createddate}", style="body2"),
-                # Additional metadata fields
-                Text(f"Type: {self.chat.metadata.get('type', 'N/A')}", style="body2"),
-                Text(f"Required Age: {self.chat.metadata.get('required_age', 'N/A')}", style="body2"),
-                Text(f"Is Free: {self.chat.metadata.get('is_free', 'N/A')}", style="body2"),
-                Text(f"Supported Languages: {self.chat.metadata.get('supported_languages', 'N/A')}", style="body2"),
-                Text(f"Reviews: {self.chat.metadata.get('reviews', 'N/A')}", style="body2"),
-                Text(f"Website: {self.chat.metadata.get('website', 'N/A')}", style="body2"),
-                Text(f"PC Requirements: {self.chat.metadata.get('pc_requirements', 'N/A')}", style="body2"),
-                Text(f"Legal Notice: {self.chat.metadata.get('legal_notice', 'N/A')}", style="body2"),
+                Text(self.chat.title, style="headline4"),
             ]),
             padding=10
         )
         
-        # Arrange the image and details in a column
-        content_column = ListView([
-            image_container,
-            details_container
-        ],expand=1)
+        # Create a ListView for chat messages
+        self.chat_list = ListView(expand=1)
         
-        # safe_area = SafeArea(content=content_column)
+        # Create a TextField for user input
+        self.input_field = TextField(
+            hint_text="Type a message",
+            on_submit=self.send_message
+        )
+        
+        # Arrange the image, details, chat messages, and input field in a column
+        content_column = Column([
+            # image_container,
+            details_container,
+            self.chat_list,
+            self.input_field
+        ], expand=1)
+        
         self.page.add(content_column)
 
     def go_home(self, e):
         self.page.go('/')
+    def send_message(self, e):
+        user_message = self.input_field.value
+        if user_message:
+            self.chat_list.controls.append(Text(f"You: {user_message}"))
+            self.input_field.value = ""
+            self.page.update()
+            self.get_genai_response(user_message)
+
+    def get_genai_response(self, user_message):
+        response = self.genai_client.generate(user_message)
+        self.chat_list.controls.append(Text(f"Bot: {response}"))
+        self.page.update()
+

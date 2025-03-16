@@ -86,7 +86,7 @@ class Database:
             """INSERT INTO users (name, createddate, lastupdated, vertexapikey, openaiapikey, azureendpoint, azureapikey, azureapiversion, azuredeploymentname, maxhistory, metadata) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                user.name, user.createddate, datetime.now(), user.vertexapikey, user.openaiapikey, 
+                user.name, datetime.now(), datetime.now(), user.vertexapikey, user.openaiapikey, 
                 user.azureendpoint, user.azureapikey, user.azureapiversion, user.azuredeploymentname, 
                 user.maxhistory, user.metadata
             )
